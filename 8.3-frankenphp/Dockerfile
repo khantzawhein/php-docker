@@ -1,5 +1,4 @@
-FROM php:8.3-fpm
-
+FROM dunglas/frankenphp:php8.3-bookworm
 
 LABEL org.opencontainers.image.source=https://github.com/khantzawhein/vpn-service
 LABEL org.opencontainers.image.description="VPN Service Backend"
@@ -18,8 +17,9 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
     libgd-dev \
-    mariadb-client \
-    libicu-dev
+    libicu-dev \
+    mariadb-client
+
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -37,10 +37,8 @@ RUN pecl install redis excimer \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis
 
-COPY ./custom.ini /usr/local/etc/php/conf.d/custom.ini
+COPY ./conf.d/ /usr/local/etc/php/conf.d/
 
 WORKDIR /app
 
 RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo,www-data -u 1000 app
-
-
